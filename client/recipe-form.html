@@ -1,0 +1,157 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+  <script>
+    
+    const sendPost = (e, recipe) => {
+      e.preventDefault();
+      const xhr = new XMLHttpRequest();
+      /*
+      let recipe = {
+        "name": "Tea 2 Electric Boogaloo",
+        "ingredients": [
+          {
+            "name": "teabag",
+            "amount": 1,
+            "link": "",
+            "units": ""
+          }
+        ],
+        "steps": [
+          "put water in a mug",
+          "microwave the mug of water",
+          "put the teabag in the mug of water",
+          "wait a few minutes",
+          "tea is ready!"
+        ]
+      };*/
+
+      xhr.open('PUT', "/recipes");
+      xhr.setRequestHeader('Accept', 'application/json');
+      xhr.setRequestHeader('content-type', 'application/json');
+
+      xhr.onload = () => {console.log('done')};
+      xhr.send(JSON.stringify(recipe));
+      return false;
+    }
+    
+    
+    const init = () => {
+      let app = new Vue({
+        el: '#recipeForm',
+        data: {
+          name: '',
+          ingredients: [{
+              name: '',
+              amount: '',
+              unit: '',
+              link: ''
+              
+            }],
+          steps: [{"text" : ''}]
+        },
+        methods: {
+          addIngredient(){
+            this.ingredients.push({
+              name: '',
+              amount: '',
+              unit: '',
+              link: ''
+              
+            });
+          },
+          deleteIngredient(ingredient){
+            this.ingredients = this.ingredients.filter(i => i != ingredient);
+          },
+          
+          addStep(){
+            this.steps.push({"text" : ''});
+          },
+          deleteStep(step){
+            this.steps = this.steps.filter(s => s != step);
+          },
+          getRecipe() {
+            return {"name" : this.name, "ingredients" : this.ingredients, "steps" : this.steps};
+          }
+        }
+      });
+    
+      const nameForm = document.querySelector('#recipeForm');
+
+      const addRecipe = (e) => sendPost(e, app.getRecipe());
+
+      nameForm.addEventListener('submit', addRecipe);
+    
+    };
+    
+    window.onload = init;
+
+  </script>
+</head>
+<body>
+  <section id="top">
+    <h3>POST Status Code Tests</h3>
+    <form id="recipeForm" action="/recipes" method="post">
+      <label for="name">Recipe Name:</label><input type="text" id="name" v-model="name"required>
+      <ul id="ingredients">
+        <li v-for="ingredient in ingredients" class="ingredient">
+          <label for="ingredient-name">Ingredient</label>
+          <input type="text" id="ingredient-name" v-model="ingredient.name" required>
+          <!--is text to allow for input of fractions-->
+          <label for="amount">Amount </label> <input type="text" v-model="ingredient.amount" size="4"> 
+          <label for="units">Units</label>
+          <select id="units" v-model="ingredient.unit">
+            <option value=" "> </option>
+          
+            <option value="ml">ml</option>
+            <option value="dl">dl</option>
+            <option value="liter">liter</option>
+            
+            <option value="dash">dash</option>
+            <option value="fl oz">fl oz</option>
+            <option value="cup">cup</option>
+            
+            <option value="oz">oz</option>
+            <option value="lb">lb</option>
+            
+            <option value="pinch">pinch</option>
+            <option value="tsp">tsp</option>
+            <option value="tbsp">tbsp</option>
+            
+            <option value="mg">mg</option>
+            <option value="g">g</option>
+            <option value="kg">kg</option>
+            
+            <option value="pint">pint</option>
+            <option value="quart">quart</option>
+            <option value="gallon">gallon</option>
+            
+            <option value="mm">mm</option>
+            <option value="cm">cm</option>
+            <option value="m">m</option>
+            
+            <option value="inch">inch</option>
+          </select>
+          <label for="link">Store Link (optional)</label><input type="url" id="link" v-model="ingredient.link">
+          <button type="button" v-on:click="deleteIngredient(ingredient)">Delete Ingredient</button>
+        </li>
+      </ul>
+      <button type="button" v-on:click="addIngredient">Add Ingredient</button>
+      <ol id="steps">
+        <li v-for="step in steps">
+          <textarea width="100px" height="100px" v-model="step.text"></textarea><br>
+          <button type="button" v-on:click="deleteStep(step)">Delete Step</button>
+          <br><br>
+        </li>
+      </ol>
+      <button type="button" v-on:click="addStep">Add Step</button>
+      <br>
+      <input type="submit" value="Add Recipe" />
+    </form>
+    <p>Go to <a href="/recipes">/recipes</a> to see recipes.</p>
+  </section>
+  <section id="content">
+  </section>
+  </body>
+</html>
