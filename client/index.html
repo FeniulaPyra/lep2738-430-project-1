@@ -3,5 +3,33 @@
   <head>
   </head>
   <body>
+    <h1>Cookbook Library</h1>
+    <h2>For users:</h2>
+    <p>Welcome! To add a recipe head over to <a href="/add-recipe">/add-recipe</a></p>
+    
+    <h2>For Admins:</h2>
+    <p>The admin page is at <a href="/admin">/admin</a></p>
+    
+    <h2>API Information</h2>
+    <p>The api endpoint is at <a href="/recipes">/recipes</a></p>
+    <h3> Parameters:</h3>
+      <ul>
+        <li>name - finds recipes with this exact entire phrase</li>
+        <li>searchterm - finds recipes with titles that contain this phrase</li>
+        <li>ingredients - for searching for recipes with certain ingredients. Seperate them with commas!</li>
+        <li>limit - limits the number of results sent back. The default is no limit.</li>
+      </ul>
+    
+      All of the parameters can be used at the same time, but I using the name parameter <br>
+      at the same time as the other parameters would be redundant, since at this time <br>
+      every recipe is required to have a unique name, so the name parameter will always come up<br>
+      with just one recipe.<br><br>
+      Using none of the parameters will send back every recipe. (for now)
+    <h3>Try it out!</h3>
+    <ul>
+      <li>find recipes with 'egg' in the name<a href='/recipes?searchterm=cheese'>/recipes?searchterm=cheese</a> </li>
+      <li>find recipes with 'egg' as an ingredient<a href='/recipes?ingredients=egg'>/recipes?ingredients=egg</a></li>
+      <li>find recipes named 'Fried Egg' <a href='/recipes?name=boil%20pasta'>/recipes?name=boil%20pasta</a></li>
+    </ul>
   </body>
 </html>
