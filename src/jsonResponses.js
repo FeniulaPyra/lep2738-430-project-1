@@ -119,7 +119,25 @@ const recipes = {
     ]
   }
 };
-
+/*
+let recipe = {
+  "name": "Tea 2 Electric Boogaloo",
+  "ingredients": [
+    {
+      "name": "teabag",
+      "amount": 1,
+      "link": "",
+      "units": ""
+    }
+  ],
+  "steps": [
+    "put water in a mug",
+    "microwave the mug of water",
+    "put the teabag in the mug of water",
+    "wait a few minutes",
+    "tea is ready!"
+  ]
+};*/
 const respondJSON = (request, response, statusCode, object) => {
   response.writeHead(statusCode, { 'Content-Type': 'application/json' });
   response.write(JSON.stringify(object));
@@ -286,8 +304,8 @@ const handlePutAndPost = (request, response, method, funct) => {
   });
 
   request.on('end', () => {
-    const bodyString = Buffer.concat(body).toString(); // name=tony&age=35
-    const bodyParams = JSON.parse(bodyString); // turn into an object with .name & .age
+    const bodyString = Buffer.concat(body).toString(); 
+    const bodyParams = JSON.parse(bodyString); 
     funct(request, response, bodyParams, method);
   });
 };

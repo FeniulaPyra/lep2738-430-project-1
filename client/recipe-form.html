@@ -7,25 +7,6 @@
     const sendPost = (e, recipe) => {
       e.preventDefault();
       const xhr = new XMLHttpRequest();
-      /*
-      let recipe = {
-        "name": "Tea 2 Electric Boogaloo",
-        "ingredients": [
-          {
-            "name": "teabag",
-            "amount": 1,
-            "link": "",
-            "units": ""
-          }
-        ],
-        "steps": [
-          "put water in a mug",
-          "microwave the mug of water",
-          "put the teabag in the mug of water",
-          "wait a few minutes",
-          "tea is ready!"
-        ]
-      };*/
 
       xhr.open('PUT', "/recipes");
       xhr.setRequestHeader('Accept', 'application/json');
