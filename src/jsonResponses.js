@@ -135,10 +135,6 @@ const recipeAlreadyExists = {
   id: 'conflict',
 };
 
-const getIngredients = (request, response) => {
-  
-}
-
 const getRecipes = (request, response, params) => {
   // for finding a recipe with this entire name
   let { name } = params;
@@ -203,21 +199,21 @@ const addRecipe = (request, response, params, method) => {
   if (recipe.ingredients.length < 1 || recipe.steps.length < 1 || recipe.name.length < 1) {
     return respondJSON(request, response, 400, missingParameters);
   }
-  
+
   // if trying to post a recipe with a name that already exists.
   if (method.toLowerCase() === 'post' && recipes[recipe.name.toLowerCase()]) {
     return respondJSON(request, response, 409, recipeAlreadyExists);
   }
   // if trying to update a nonexstant recipe.
-  else if(method.toLowerCase() === 'put' && !recipes[recipe.name.toLowerCase()]) {
-    return respondJSON(request, response, 404, recipe)
+  if (method.toLowerCase() === 'put' && !recipes[recipe.name.toLowerCase()]) {
+    return respondJSON(request, response, 404, recipe);
   }
-  
+
   recipes[recipe.name.toLowerCase()] = recipe;
-  const responseCode = method.toLowerCase() == 'post' ? 201 : 204;
+  const responseCode = method.toLowerCase() === 'post' ? 201 : 204;
   const jsonResponse = {
     id: recipe.name,
-    message: `Recipe ${method.toLowerCase() === 'post' ? 'Created' : 'Updated' } Successfully`,
+    message: `Recipe ${method.toLowerCase() === 'post' ? 'Created' : 'Updated'} Successfully`,
   };
   return respondJSON(request, response, responseCode, jsonResponse);
 };
@@ -312,20 +308,17 @@ const handleRecipes = (request, response, params, httpMethod) => {
 };
 
 const handleIngredients = (request, response) => {
-  
-  let recipesVals = Object.values(recipes);
-  
-  console.log(recipesVals);
-  
+  const recipesVals = Object.values(recipes);
+
   let allIngredients = [];
-  recipesVals.forEach( (recipe) => {
-    let ingredientNames = recipe.ingredients.map(a=>a.name);
+  recipesVals.forEach((recipe) => {
+    const ingredientNames = recipe.ingredients.map((a) => a.name);
 
     allIngredients = allIngredients.filter((a) => !ingredientNames.includes(a));
     allIngredients = allIngredients.concat(ingredientNames);
   });
   respondJSON(request, response, 200, allIngredients);
-}
+};
 
 module.exports = {
   handleRecipes,
