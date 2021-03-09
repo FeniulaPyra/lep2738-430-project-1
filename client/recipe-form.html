@@ -8,11 +8,11 @@
       e.preventDefault();
       const xhr = new XMLHttpRequest();
 
-      xhr.open('PUT', "/recipes");
+      xhr.open('POST', "/recipes");
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('content-type', 'application/json');
 
-      xhr.onload = () => {console.log('done')};
+      xhr.onload = () => { alert(JSON.parse(xhr.responseText).message) };
       xhr.send(JSON.stringify(recipe));
       return false;
     }
@@ -57,11 +57,11 @@
         }
       });
     
-      const nameForm = document.querySelector('#recipeForm');
+      const recipeForm = document.querySelector('#recipeForm');
 
       const addRecipe = (e) => sendPost(e, app.getRecipe());
 
-      nameForm.addEventListener('submit', addRecipe);
+      recipeForm.addEventListener('submit', addRecipe);
     
     };
     
@@ -137,7 +137,7 @@
       <br>
       <input type="submit" value="Add Recipe" />
     </form>
-    <p>Go to <a href="/recipes">/recipes</a> to see recipes.</p>
+    <p>Go to <a href="/browse">/browse</a> to see recipes.</p>
   </section>
   <section id="content">
   </section>

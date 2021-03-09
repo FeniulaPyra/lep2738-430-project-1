@@ -17,6 +17,7 @@ const urlStruct = {
   '/browse': responseHandler.getBrowsePage, // app
 
   '/recipes': jsonHandler.handleRecipes,
+  '/ingredients': jsonHandler.handleIngredients,
 
   '/default-styles.css': responseHandler.getCSS,
   '/logo': responseHandler.getLogo,
