@@ -90,29 +90,95 @@ const recipes = {
       { text: 'serve the pasta with your favorite sauce.' },
     ],
   },
+  tea: {
+    name: 'Tea',
+    ingredients: [
+      {
+        name: 'teabag',
+        amount: 1,
+        link: '',
+        units: '',
+      },
+    ],
+    steps: [
+      { text: 'put water in a mug' },
+      { text: 'microwave the mug of water' },
+      { text: 'put the teabag in the mug of water' },
+      { text: 'wait a few minutes' },
+      { text: 'tea is ready!' },
+    ],
+  },
 };
-/*
-let recipe = {
-  "name": "Tea 2 Electric Boogaloo",
-  "ingredients": [
-    {
-      "name": "teabag",
-      "amount": 1,
-      "link": "",
-      "units": ""
+
+const respond = (request, response, method, statusCode, object) => {
+  let acceptedTypes = request.headers.accept && request.headers.accept.split(',');
+  acceptedTypes = acceptedTypes || [];
+
+  const headers = {
+    'content-type': 'application/json',
+    'access-control-allow-origin': '*',
+  };
+
+  // const jsonStringObject = JSON.stringify(object);
+  let stringObject = JSON.stringify(object);
+
+  if (acceptedTypes.includes('text/xml')) {
+    headers['content-type'] = 'text/xml';
+    // if response is an error
+    if (Math.floor(statusCode / 100) === 4) {
+      stringObject = `
+        <error> 
+          <message>
+            ${object.message}
+          </message>
+          <id>
+            ${object.id}
+          </id>
+        <error>
+        `;
+    } else {
+      stringObject = '<recipes>';
+      const recipesResponse = Object.values(object);
+      // adds recipe
+      recipesResponse.forEach((recipe) => {
+        stringObject += `
+        <recipe>
+        <name>
+          ${recipe.name}
+        </name>
+        <ingredients>`;
+        // adds ingredients
+        recipe.ingredients.forEach((ingredient) => {
+          stringObject += `
+          <ingredient>
+            <name>${ingredient.name}</name>
+            <amount>${ingredient.amount}</amount>
+            <units>${ingredient.units}</units>
+            <link>${ingredient.link}</link>
+          </ingredient>`;
+        });
+
+        // adds steps
+        stringObject += '</ingredients><steps>';
+        recipe.steps.forEach((step) => {
+          stringObject += `<step><text>${step.text}</text></step>`;
+        });
+
+        stringObject += '</steps></recipe>';
+      });
+
+      stringObject += '</recipes>';
     }
-  ],
-  "steps": [
-    "put water in a mug",
-    "microwave the mug of water",
-    "put the teabag in the mug of water",
-    "wait a few minutes",
-    "tea is ready!"
-  ]
-}; */
-const respondJSON = (request, response, statusCode, object) => {
-  response.writeHead(statusCode, { 'Content-Type': 'application/json' });
-  response.write(JSON.stringify(object));
+  }
+
+  if (method === 'HEAD') {
+    headers['content-length'] = Buffer.byteLength(stringObject, 'utf-8');
+    response.writeHead(statusCode, headers);
+  } else {
+    console.log(stringObject);
+    response.writeHead(statusCode, headers);
+    response.write(stringObject);
+  }
   response.end();
 };
 
@@ -134,8 +200,16 @@ const recipeAlreadyExists = {
             use the edit button.`,
   id: 'conflict',
 };
+const modifyEndpointMethodRestriction = {
+  message: 'This endpoint is for POST, PUT and DELETE methods only. For viewing api data, use /recipes',
+  id: 'methodNotAllowed',
+};
+const dataEndpointMethodRestriction = {
+  message: 'This endpoint is for GET and HEAD methods only. For modifying api data, use /manage-recipes',
+  id: 'methodNotAllowed',
+};
 
-const getRecipes = (request, response, params) => {
+const getRecipes = (request, response, params, httpMethod) => {
   // for finding a recipe with this entire name
   let { name } = params;
   // for searching for recipes with this term in their name.
@@ -153,7 +227,7 @@ const getRecipes = (request, response, params) => {
     name = name.toLowerCase();
     results = results.filter((r) => r.name.toLowerCase() === name);
     // make sure id exists
-    if (results.length < 1) return respondJSON(request, response, 404, invalidID);
+    if (results.length < 1) return respond(request, response, httpMethod, 404, invalidID);
   }
 
   // gets recipes with searchterm in their name
@@ -181,11 +255,11 @@ const getRecipes = (request, response, params) => {
 
   // if there were no results respond saying so.
   if (results.length < 1) {
-    return respondJSON(request, response, 404, noRecipes);
+    return respond(request, response, httpMethod, 404, noRecipes);
   }
   // otherwise send back the recipes
 
-  return respondJSON(request, response, 200, results);
+  return respond(request, response, httpMethod, 200, results);
 };
 
 const addRecipe = (request, response, params, method) => {
@@ -193,71 +267,40 @@ const addRecipe = (request, response, params, method) => {
 
   // if missing parameters
   if (!recipe.ingredients || !recipe.steps || !recipe.name) {
-    return respondJSON(request, response, 400, missingParameters);
+    return respond(request, response, method, 400, missingParameters);
   }
   // if params are empty
   if (recipe.ingredients.length < 1 || recipe.steps.length < 1 || recipe.name.length < 1) {
-    return respondJSON(request, response, 400, missingParameters);
+    return respond(request, response, method, 400, missingParameters);
   }
 
   // if trying to post a recipe with a name that already exists.
-  if (method.toLowerCase() === 'post' && recipes[recipe.name.toLowerCase()]) {
-    return respondJSON(request, response, 409, recipeAlreadyExists);
+  if (method === 'POST' && recipes[recipe.name.toLowerCase()]) {
+    return respond(request, response, method, 409, recipeAlreadyExists);
   }
   // if trying to update a nonexstant recipe.
-  if (method.toLowerCase() === 'put' && !recipes[recipe.name.toLowerCase()]) {
-    return respondJSON(request, response, 404, recipe);
+  if (method === 'PUT' && !recipes[recipe.name.toLowerCase()]) {
+    return respond(request, response, method, 404, recipe);
   }
 
   recipes[recipe.name.toLowerCase()] = recipe;
-  const responseCode = method.toLowerCase() === 'post' ? 201 : 204;
+  const responseCode = method === 'POST' ? 201 : 204;
   const jsonResponse = {
     id: recipe.name,
-    message: `Recipe ${method.toLowerCase() === 'post' ? 'Created' : 'Updated'} Successfully`,
+    message: `Recipe ${method === 'POST' ? 'Created' : 'Updated'} Successfully`,
   };
-  return respondJSON(request, response, responseCode, jsonResponse);
-};
-/*
-const updateRecipe = (request, response, params) => {
-  const recipe = params;
-
-  // if missing parameters
-  if (!recipe.ingredients || recipe.ingredients.length < 1
-      || !recipe.steps || recipe.steps.length < 1
-      || !recipe.name || recipe.name.length < 1) {
-    return respondJSON(request, response, 400, missingParameters);
-  }
-
-  // recipe id's will always be lowercase for easier searching
-  const recipeID = recipe.name.toLowerCase();
-
-  if (!recipes[recipeID]) {
-    return respondJSON(request, response, 404, invalidID);
-  }
-
-  recipes[recipeID] = recipe;
-  const responseCode = 204;
-  const jsonResponse = {
-    message: 'Updated Successfully',
-    id: recipe.name,
-  };
-  return respondJSON(request, response, responseCode, jsonResponse);
-};
-*/
-const getHeaders = (request, response) => {
-  response.writeHead(200, { 'Content-Type': 'application/json' });
-  response.end();
+  return respond(request, response, method, responseCode, jsonResponse);
 };
 
-const deleteRecipe = (request, response, params) => {
+const deleteRecipe = (request, response, params, method) => {
   if (!params.name || params.name < 1) {
-    return respondJSON(request, response, 400, missingParameters);
+    return respond(request, response, method, 400, missingParameters);
   }
 
   const recipeName = params.name.toLowerCase();
 
   if (!recipes[recipeName]) {
-    return respondJSON(request, response, 404, invalidID);
+    return respond(request, response, method, 404, invalidID);
   }
 
   delete recipes[recipeName];
@@ -267,7 +310,7 @@ const deleteRecipe = (request, response, params) => {
     message: 'Successfully deleted recipe.',
     id: 'deleteSuccess',
   };
-  return respondJSON(request, response, responseCode, jsonResponse);
+  return respond(request, response, method, responseCode, jsonResponse);
 };
 
 const handlePutAndPost = (request, response, method, funct) => {
@@ -285,13 +328,15 @@ const handlePutAndPost = (request, response, method, funct) => {
 };
 
 const handleRecipes = (request, response, params, httpMethod) => {
+  if (httpMethod === 'HEAD' || httpMethod === 'GET') {
+    getRecipes(request, response, params, httpMethod);
+  } else {
+    respond(request, response, httpMethod, 405, dataEndpointMethodRestriction);
+  }
+};
+
+const manageRecipes = (request, response, params, httpMethod) => {
   switch (httpMethod) {
-    case 'GET':
-      getRecipes(request, response, params);
-      break;
-    case 'HEAD':
-      getHeaders(request, response, params);
-      break;
     case 'POST':
       handlePutAndPost(request, response, httpMethod, addRecipe);
       break;
@@ -302,12 +347,15 @@ const handleRecipes = (request, response, params, httpMethod) => {
       handlePutAndPost(request, response, httpMethod, deleteRecipe);
       break;
     default:
-      // error -
+      respond(request, response, httpMethod, 405, modifyEndpointMethodRestriction);
       break;
   }
 };
 
-const handleIngredients = (request, response) => {
+const handleIngredients = (request, response, httpMethod) => {
+  if (httpMethod !== 'HEAD' && httpMethod !== 'GET') {
+    respond(request, response, httpMethod, 405, dataEndpointMethodRestriction);
+  }
   const recipesVals = Object.values(recipes);
 
   let allIngredients = [];
@@ -317,10 +365,12 @@ const handleIngredients = (request, response) => {
     allIngredients = allIngredients.filter((a) => !ingredientNames.includes(a));
     allIngredients = allIngredients.concat(ingredientNames);
   });
-  respondJSON(request, response, 200, allIngredients);
+  respond(request, response, httpMethod, 200, allIngredients);
 };
 
 module.exports = {
   handleRecipes,
   handleIngredients,
+  manageRecipes,
+
 };

@@ -8,10 +8,10 @@
       e.preventDefault();
       const xhr = new XMLHttpRequest();
 
-      xhr.open('POST', "/recipes");
+      xhr.open('POST', "/manage-recipes");
       xhr.setRequestHeader('Accept', 'application/json');
       xhr.setRequestHeader('content-type', 'application/json');
-
+      
       xhr.onload = () => { alert(JSON.parse(xhr.responseText).message) };
       xhr.send(JSON.stringify(recipe));
       return false;
