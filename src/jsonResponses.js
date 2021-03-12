@@ -124,8 +124,8 @@ const respond = (request, response, method, statusCode, object) => {
 
   if (acceptedTypes.includes('text/xml')) {
     headers['content-type'] = 'text/xml';
-    // if response is an error
-    if (Math.floor(statusCode / 100) === 4) {
+    // if response is a message
+    if (stringObject.message) {
       stringObject = `
         <error> 
           <message>
@@ -175,7 +175,6 @@ const respond = (request, response, method, statusCode, object) => {
     headers['content-length'] = Buffer.byteLength(stringObject, 'utf-8');
     response.writeHead(statusCode, headers);
   } else {
-    console.log(stringObject);
     response.writeHead(statusCode, headers);
     response.write(stringObject);
   }
@@ -287,7 +286,7 @@ const addRecipe = (request, response, params, method) => {
   const responseCode = method === 'POST' ? 201 : 204;
   const jsonResponse = {
     id: recipe.name,
-    message: `Recipe ${method === 'POST' ? 'Created' : 'Updated'} Successfully`,
+    message: `Recipe ${method === 'POST' ? 'Created' : 'Updated'} Successfully. Find at /recipes?name=${recipe.name.toLowerCase()}`,
   };
   return respond(request, response, method, responseCode, jsonResponse);
 };

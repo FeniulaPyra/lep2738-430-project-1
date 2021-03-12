@@ -1,0 +1,99 @@
+* {
+  --dark-bg: #3a170a;
+  --light-bg: #7d4029;
+  --parchment: #f0f0d1;
+  --parchment-bg:  url("parchment-texture"), linear-gradient(to right, #f0f0d1bf, #f0f0d1bf 50%, var(--dark-bg) 80%, #f0f0d1bf );
+  --paper-bg: url("parchment-texture"), #ffffffcf;
+  --light-accent: #fca311;
+  --highlight: #92EE81;
+  --bookmark: #A31515;
+ /*margin: 0;
+  padding: 0;
+  */
+  color: var(--dark-bg);
+  height: auto;
+}
+
+html {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  background: var(--dark-bg);
+  color: var(--parchment);
+  font-family: 'Architects Daughter', cursive;
+  margin: 0; 
+  padding: 0;
+  
+  display: grid;
+  grid-template-columns: 10vw 90vw;
+  grid-template-rows: 1fr 8fr;
+  grid-template-areas: "header header"
+                       "nav main";
+}
+
+h1 {
+  color: var(--parchment); 
+  text-align: center;
+  grid-area: header;
+  width: auto;
+  margin: 0;
+  padding: 1rem;
+  background: var(--light-bg);
+
+}
+
+nav {
+  grid-area: nav;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin: 0;
+  margin-top: 2rem;
+}
+
+main {
+  grid-area: main;
+  background: var(--parchment-bg);
+  background-blend-mode: overlay;
+  background-repeat:repeat;
+
+  color: var(--dark-bg);
+  margin: 0;
+  margin-top: 2rem;
+  padding: 2rem;
+  overflow-y: auto;
+  height: 72vh;
+  border-top-left-radius: 3px;
+  border-bottom-left-radius: 3px;
+}
+
+
+nav a {
+  text-decoration: none;
+  
+  background: var(--bookmark);
+  color: var(--parchment);
+  
+  padding: .5rem;
+  margin: .5rem;
+  margin-right: 0;
+  border-top-left-radius: 10px;
+  border-bottom-left-radius: 10px;
+  transition: margin .2s;
+}
+
+nav a:hover {
+  margin-left: 1rem;
+}
+
+button, input, textarea, select {
+  border: none;
+  font-family: 'Architects Daughter', cursive;
+  
+  background: var(--paper-bg);
+  background-blend-mode:overlay;
+  background-repeat: repeat;
+}

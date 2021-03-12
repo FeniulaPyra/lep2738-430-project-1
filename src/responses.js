@@ -7,6 +7,7 @@ const mainPage = fs.readFileSync(`${__dirname}/../client/index.html`);
 
 const css = fs.readFileSync(`${__dirname}/../css/default-styles.css`);
 const logo = fs.readFileSync(`${__dirname}/../client/media/logo.png`);
+const parchment = fs.readFileSync(`${__dirname}/../client/media/paper.jpg`);
 
 const errorPage = fs.readFileSync(`${__dirname}/../client/error.html`);
 
@@ -37,6 +38,12 @@ const getLogo = (request, response) => {
   response.end();
 };
 
+const getParchment = (request, response) => {
+  response.writeHead(200, { 'Content-Type': 'image/jpg' });
+  response.write(parchment);
+  response.end();
+};
+
 module.exports = {
   getMainPage, // main page
   getAdminPage, // admin
@@ -45,6 +52,7 @@ module.exports = {
 
   getCSS,
   getLogo,
+  getParchment,
 
   get404Response,
 };

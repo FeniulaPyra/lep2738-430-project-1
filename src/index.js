@@ -20,8 +20,9 @@ const urlStruct = {
   '/manage-recipes': jsonHandler.manageRecipes,
   '/ingredients': jsonHandler.handleIngredients,
 
-  '/default-styles.css': responseHandler.getCSS,
+  '/default-styles': responseHandler.getCSS,
   '/logo': responseHandler.getLogo,
+  '/parchment-texture': responseHandler.getParchment,
 
   notFound: responseHandler.get404Response,
 };

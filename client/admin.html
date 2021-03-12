@@ -3,6 +3,9 @@
   <head>
     <title>Cookbook - Admin</title>
     <meta charset="utf-8">
+    <link rel="stylesheet" href="/default-styles">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
     <script>
       
@@ -103,90 +106,97 @@
     </script>
   </head>
   <body>
-    <h1>Cookbook Admin Access</h1>
-    
-    <form id="recipeEditor">
-      <h1>Editing: {{curRecipe.name}}</h1>
-      <ul id="ingredients">
-        <li v-for="ingredient in curRecipe.ingredients" class="ingredient">
-          <label for="ingredient-name">Ingredient</label>
-          <input type="text" id="ingredient-name" v-model="ingredient.name" required>
-          <!--is text to allow for input of fractions-->
-          <label for="amount">Amount </label> <input type="text" v-model="ingredient.amount" size="4"> 
-          <label for="units">Units</label>
-          <select id="units" v-model="ingredient.unit">
-            <option value=" "> </option>
+    <h1>Admin</h1>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/browse">Search</a>
+      <a href="/add-recipe">Add</a>
+      <a href="/admin">Admin</a>
+    </nav>
+    <main>
+      <form id="recipeEditor">
+        <h2>Editing: {{curRecipe.name}}</h2>
+        <ul id="ingredients">
+          <li v-for="ingredient in curRecipe.ingredients" class="ingredient">
+            <label for="ingredient-name">Ingredient</label>
+            <input type="text" id="ingredient-name" v-model="ingredient.name" required>
+            <!--is text to allow for input of fractions-->
+            <label for="amount">Amount </label> <input type="text" v-model="ingredient.amount" size="4"> 
+            <label for="units">Units</label>
+            <select id="units" v-model="ingredient.unit">
+              <option value=" "> </option>
 
-            <option value="can">can</option>
-            <option value="box">box</option>
-            <option value="bag">bag</option>
-            <option value="jar">jar</option>
+              <option value="can">can</option>
+              <option value="box">box</option>
+              <option value="bag">bag</option>
+              <option value="jar">jar</option>
 
-            <option value="bunch">bunch</option>
-            <option value="sprig">sprig</option>
+              <option value="bunch">bunch</option>
+              <option value="sprig">sprig</option>
 
-            <option value="ml">ml</option>
-            <option value="dl">dl</option>
-            <option value="liter">liter</option>
+              <option value="ml">ml</option>
+              <option value="dl">dl</option>
+              <option value="liter">liter</option>
 
-            <option value="dash">dash</option>
-            <option value="fl oz">fl oz</option>
-            <option value="cup">cup</option>
+              <option value="dash">dash</option>
+              <option value="fl oz">fl oz</option>
+              <option value="cup">cup</option>
 
-            <option value="oz">oz</option>
-            <option value="lb">lb</option>
+              <option value="oz">oz</option>
+              <option value="lb">lb</option>
 
-            <option value="pinch">pinch</option>
-            <option value="tsp">tsp</option>
-            <option value="tbsp">tbsp</option>
+              <option value="pinch">pinch</option>
+              <option value="tsp">tsp</option>
+              <option value="tbsp">tbsp</option>
 
-            <option value="mg">mg</option>
-            <option value="g">g</option>
-            <option value="kg">kg</option>
+              <option value="mg">mg</option>
+              <option value="g">g</option>
+              <option value="kg">kg</option>
 
-            <option value="pint">pint</option>
-            <option value="quart">quart</option>
-            <option value="gallon">gallon</option>
+              <option value="pint">pint</option>
+              <option value="quart">quart</option>
+              <option value="gallon">gallon</option>
 
-            <option value="mm">mm</option>
-            <option value="cm">cm</option>
-            <option value="m">m</option>
+              <option value="mm">mm</option>
+              <option value="cm">cm</option>
+              <option value="m">m</option>
 
-            <option value="inch">inch</option>
-          </select>
-          <label for="link">Store Link (optional)</label><input type="url" id="link" v-model="ingredient.link">
-          <button type="button" v-on:click="deleteIngredient(ingredient)">Delete Ingredient</button>
-        </li>
-      </ul>
-      <button type="button" v-on:click="addIngredient">Add Ingredient</button>
-      <ol id="steps">
-        <li v-for="step in curRecipe.steps">
-          <textarea width="100px" height="100px" v-model="step.text"></textarea><br>
-          <button type="button" v-on:click="deleteStep(step)">Delete Step</button>
-          <br><br>
-        </li>
-      </ol>
-      <button type="button" v-on:click="addStep">Add Step</button>
-      <br>
-      <input type="submit" value="Update Recipe" />
-    </form>
-    <div id="recipes">
-      <div class="recipe" v-for='recipe in recipes'>
-        <h3>{{recipe.name}}</h3>
-        <ul>
-          <li v-for="ingredient in recipe.ingredients">
-            {{ingredient.amount}} {{ingredient.units}} <a v-bind:href="ingredient.link">{{ingredient.name}}</a>
+              <option value="inch">inch</option>
+            </select>
+            <label for="link">Store Link (optional)</label><input type="url" id="link" v-model="ingredient.link">
+            <button type="button" v-on:click="deleteIngredient(ingredient)">Delete Ingredient</button>
           </li>
         </ul>
-        <ol>
-          <li v-for="step in recipe.steps">
-            {{step.text}}
+        <button type="button" v-on:click="addIngredient">Add Ingredient</button>
+        <ol id="steps">
+          <li v-for="step in curRecipe.steps">
+            <textarea cols="50" rows="10" v-model="step.text"></textarea><br>
+            <button type="button" v-on:click="deleteStep(step)">Delete Step</button>
+            <br><br>
           </li>
         </ol>
-        <button id="edit" v-on:click="stageRecipe(recipe)">Edit</button>
-        <button id="delete" v-on:click="deleteRecipe(recipe.name)">Delete</button>
-      </div>   
-    </div>
+        <button type="button" v-on:click="addStep">Add Step</button>
+        <br>
+        <input type="submit" value="Update Recipe" />
+      </form>
+      <div id="recipes">
+        <div class="recipe" v-for='recipe in recipes'>
+          <h3>{{recipe.name}}</h3>
+          <ul>
+            <li v-for="ingredient in recipe.ingredients">
+              {{ingredient.amount}} {{ingredient.units}} <a v-bind:href="ingredient.link">{{ingredient.name}}</a>
+            </li>
+          </ul>
+          <ol>
+            <li v-for="step in recipe.steps">
+              {{step.text}}
+            </li>
+          </ol>
+          <button id="edit" v-on:click="stageRecipe(recipe)">Edit</button>
+          <button id="delete" v-on:click="deleteRecipe(recipe.name)">Delete</button>
+        </div>   
+      </div>
+    </main>
   </body>
 </html>
   

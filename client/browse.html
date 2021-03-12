@@ -1,34 +1,48 @@
 <!DOCTYPE HTML>
 <html>
   <head>
+    <title>Search Recipes</title>
+    <link rel="stylesheet" href="/default-styles">
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Architects+Daughter&display=swap" rel="stylesheet"> 
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
   </head>
   <body>
     <h1>Search Recipes</h1>
-    <div id="search">
-      <label for="searchterm">Search for recipes: </label>
-      <input type="text" id="searchterm" v-model='searchterm'>
-      <br>
-      <label for="ingredients">With ingredients (seperated by commas): </label>
-      <input type="text" id="ingredients" v-model='ingredients'>
-      <button type="button" v-on:click='searchRecipes'>Search</button>
-      
-      <div id="results">
-        <div class="recipe" v-for='recipe in recipes'>
-          <h3>{{recipe.name}}</h3>
-          <ul>
-            <li v-for="ingredient in recipe.ingredients">
-              {{ingredient.amount}} {{ingredient.units}} <a v-bind:href="ingredient.link">{{ingredient.name}}</a>
-            </li>
-          </ul>
-          <ol>
-            <li v-for="step in recipe.steps">
-              {{step.text}}
-            </li>
-          </ol>
+    <nav>
+      <a href="/">Home</a>
+      <a href="/browse">Search</a>
+      <a href="/add-recipe">Add</a>
+      <a href="/admin">Admin</a>
+    </nav>
+    <main>
+      <div id="search">
+        <label for="searchterm">Search for recipes: </label>
+        <input type="text" id="searchterm" v-model='searchterm'>
+        <br>
+        <label for="ingredients">With ingredients (separated by commas): </label>
+        <input type="text" id="ingredients" v-model='ingredients'>
+        <button type="button" v-on:click='searchRecipes'>Search</button>
+
+        <div id="results">
+          <div class="recipe" v-for='recipe in recipes'>
+            <h3>{{recipe.name}}</h3>
+            <ul>
+              <li v-for="ingredient in recipe.ingredients">
+                {{ingredient.amount}} {{ingredient.units}} 
+                <a v-if="ingredient.link.length > 0" v-bind:href="ingredient.link">{{ingredient.name}}</a>
+                <p v-else>{{ingredient.name}}</p>
+              </li>
+            </ul>
+            <ol>
+              <li v-for="step in recipe.steps">
+                {{step.text}}
+              </li>
+            </ol>
+          </div>
         </div>
       </div>
-    </div>
+    </main>
     <script>
       let app = new Vue({
         el: '#search',
