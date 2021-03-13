@@ -189,20 +189,20 @@ const missingParameters = {
             ingredient and at least 1 step`,
   id: 'missingParams',
 };
-const noRecipes = {
+/*const noRecipes = {
   message: 'No recipes were found.',
   id: 'notFound',
-};
+};*/
 const invalidID = {
   message: 'A recipe with that name does not exist.',
   id: 'notFound',
 };
 const missingName = {
   message: 'You are required to provide the unique name of a recipe to delete it.',
-  id: 'missingName'
-}
+  id: 'missingName',
+};
 const recipeAlreadyExists = {
-  message: `A recipe with that name already exists. If you are trying to update an existing recipe, go to /admin and click the edit button under the recipe you want to edit.`,
+  message: 'A recipe with that name already exists. If you are trying to update an existing recipe, go to /admin and click the edit button under the recipe you want to edit.',
   id: 'conflict',
 };
 const modifyEndpointMethodRestriction = {
@@ -312,7 +312,7 @@ const deleteRecipe = (request, response, params, method) => {
   const responseCode = 204;
   const jsonResponse = {
     message: 'Successfully deleted recipe.',
-    id: 'deleteSuccess'
+    id: 'deleteSuccess',
   };
   return respond(request, response, method, responseCode, jsonResponse);
 };
