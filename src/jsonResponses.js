@@ -189,10 +189,10 @@ const missingParameters = {
             ingredient and at least 1 step`,
   id: 'missingParams',
 };
-/*const noRecipes = {
+/* const noRecipes = {
   message: 'No recipes were found.',
   id: 'notFound',
-};*/
+}; */
 const invalidID = {
   message: 'A recipe with that name does not exist.',
   id: 'notFound',
@@ -341,6 +341,7 @@ const handleRecipes = (request, response, params, httpMethod) => {
   }
 };
 
+//handles modifying the recipe data on the server
 const modifyRecipes = (request, response, params, httpMethod) => {
   if (httpMethod === 'POST' || httpMethod === 'PUT') {
     handlePutAndPost(request, response, httpMethod, addRecipe);
@@ -351,7 +352,8 @@ const modifyRecipes = (request, response, params, httpMethod) => {
   }
 };
 
-const handleIngredients = (request, response, httpMethod) => {
+//sends back all the ingredients
+const handleIngredients = (request, response, params, httpMethod) => {
   if (httpMethod !== 'HEAD' && httpMethod !== 'GET') {
     respond(request, response, httpMethod, 405, dataEndpointMethodRestriction);
   }
