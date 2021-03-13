@@ -1,3 +1,64 @@
+This site is meant to be a place where people can record and share family recipes.
+The API handles recording and serving up recipes. (haha, serving);
 
+What went right:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Constructing the API went a lot smoother than I originally thought, as did the form hijacking.
+I ended up accidentally adding on PUT and DELETE methods to the api because after the POST method,
+it was just a matter of checking if a recipe already existed. I also was worried at first how I 
+could do that, but then I realized I could just hold all the data and methods in the vue object, 
+but manually hook up the submit funcitonality outside of the
+vue object.
+
+What went Wrong:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+I had some issues figuring out how to organize my post/get endpoints. I switched between having 
+them on different endpoints and having them on the same endpoint 3 times. Part of my issue was that
+according to MDN, you are never supposed to be returning a 405 error on a get or head request, and 
+if I were to put the methods on different endpoints, I would have to return a 405 error for get/head
+requests on that endpoint. I eventually saw in Postman that you can hover over status codes and it 
+gives some info, and for 405 it basically said, "No, this is exactly when you should be using 405,"
+and so I stuck with the separate endpoint thing.
+I also really didn't get around to A LOT of features I wanted there to be in my app. I will say though,
+the reason for that is many of those features rely on there being authentication (e.g. the feature to
+toggle recipes as public/private.) I also didn't get around to making actual cookbooks, which were
+meant to be collections of recipes, and while that also depends somewhat on authentication, I think I
+could have definitely implemented it without that. I considered hooking the site up to firebase to use
+its authentication api, but I decided against it as I figured that'd be too much extra work at this point
+(especially since it would introduce a lot more asynchronous stuff, which I really didn't want to deal with
+right now).
+Another thing I just remembered: about halfway through the project, I saw on twitter someone getting blasted
+because they created a recipe app that specifically found recipes articles online and stripped the story part
+away to just have the recipe part. Everyone was furious with this because they were essentially stealling
+content, and that a HUGE part of the recipes was the stories. When I saw that, I went "oh whoops" a little
+bit, because I had designed this app to be sort of geared against having a story with the recipe. It was
+meant to be like a place where you put recipes that your grandma gives you that are written down on a little
+notecard or something. After seeing that happen on twitter, I sort of realized that I really didn't do enough
+research into who I was marketing to. This disheartened me for a bit, but I moved on and chalked it down
+as a thing to do for project 2 (perhaps adding a "backstory" section before the steps?).
+
+forgot about errors and delete til last minute it has been fixed tho
+I had my api sending back 404 if the user searched with params that came up with no results, which I think
+was dumb. the user didn't try to access data that didn't exist, they just checked to see if it did exist
+if that makes sense.
+
+How would I improve the app~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+As I sort of stated in the "what went wrong" section, I would love to add authentication, cookbooks, and 
+the private/public toggle, and maybe an option to make recipes "unlisted" or add multiple authors so you
+can share with your family (which was the whole point of the app). I think I also would like to do a little
+bit more with the CSS. I'd also like to add something that encourages users to add a story to their recipe, 
+and/or perhaps allow users to create one of two types of recipes: simple recipes and story recipes.
+
+Above and beyond:~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+-I implemented put and delete along with the other required headers
+-I used css to try and make the website look like an actual cookbook - I think it turned out ok.
 
 paper texture found here: https://www.wildtextures.com/free-textures/seamless-paper-texture/
+
+HTTP status codes:
+-200: sent after a successful get/head request.
+-201: sent on a successful post request
+-204: sent on a successful put request (when the user edits a joke)
+-400: when the user tries to go to a post or put without the right params
+-404: when the server can't find the given endpoint
+-405: when the user tries to use a get/head method on the post/put/delete endpoint and vice versa
+-409: when the user tries to edit a recipe that doesn't exist (should be impossible throught the website)
+

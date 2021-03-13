@@ -29,9 +29,8 @@
             <h3>{{recipe.name}}</h3>
             <ul>
               <li v-for="ingredient in recipe.ingredients">
-                {{ingredient.amount}} {{ingredient.units}} 
-                <a v-if="ingredient.link.length > 0" v-bind:href="ingredient.link">{{ingredient.name}}</a>
-                <p v-else>{{ingredient.name}}</p>
+                {{ingredient.amount}} {{ingredient.units}} <span v-if="ingredient.units.length > 0"> of </span>
+                <a v-if="ingredient.link.length > 0" v-bind:href="ingredient.link">{{ingredient.name}}</a><span v-else>{{ingredient.name}}</span>
               </li>
             </ul>
             <ol>
@@ -58,9 +57,19 @@
             fetch('/recipes?'
             + 'searchterm=' + this.searchterm
             + '&ingredients=' + cleanIngredients).then(response =>{
-              return response.json();
+              if(response.ok)
+                return response.json();
+              else
+                throw new Error('no recipes found');
             }).then(json => {
               this.recipes = json;
+              console.log(this.recipes);
+
+//got help w/ error from here
+//https://stackoverflow.com/questions/38235715/fetch-reject-promise-and-catch-the-error-if-status-is-not-ok
+            }).catch(error=>{
+              alert(error);
+              return Promise.reject();
             });
             
           }

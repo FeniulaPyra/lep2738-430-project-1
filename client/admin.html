@@ -9,8 +9,10 @@
     <script>
       
       const getRecipes = (vueApp) => {
+        
         fetch('/recipes').then((response) => {
-          return response.json();
+          if(response.ok)
+            return response.json();
         }).then((json) => {
           vueApp.recipes = json;
         });
@@ -19,7 +21,7 @@
       const editRecipe = (e, recipe, vueApp) => {
         e.preventDefault();
         let xhr = new XMLHttpRequest();
-        xhr.open('PUT', "/manage-recipes");
+        xhr.open('PUT', "/modify-recipes");
         xhr.setRequestHeader('Accept', 'application/json');
         xhr.setRequestHeader('content-type', 'application/json');
 
@@ -49,7 +51,7 @@
               this.curRecipe.ingredients.push({
                 name: '',
                 amount: '',
-                unit: '',
+                units: '',
                 link: ''
 
               });
@@ -78,15 +80,15 @@
             },
             deleteRecipe(recipeName) {
               let xhr = new XMLHttpRequest();
-              xhr.open('DELETE', "/recipes?name=" + recipeName);
+              xhr.open('DELETE', "/modify-recipes?name=" + recipeName);
               xhr.setRequestHeader('Accept', 'application/json');
               xhr.setRequestHeader('content-type', 'application/json');
               
               xhr.onload = () => {
-                alert(JSON.parse(xhr.responseText).message); 
-                getRecipes();
+                getRecipes(recipeHandler);
+                alert(`Delete was ${xhr.status === 204 ?'successful' : 'unsuccessful'}.` ); 
               }
-              xhr.send(JSON.stringify(recipe));
+              xhr.send(JSON.stringify({name:recipeName}));
             },
           }
         });
@@ -122,7 +124,7 @@
             <!--is text to allow for input of fractions-->
             <label for="amount">Amount </label> <input type="text" v-model="ingredient.amount" size="4"> 
             <label for="units">Units</label>
-            <select id="units" v-model="ingredient.unit">
+            <select id="units" v-model="ingredient.units">
               <option value=" "> </option>
 
               <option value="can">can</option>
@@ -183,7 +185,8 @@
           <h3>{{recipe.name}}</h3>
           <ul>
             <li v-for="ingredient in recipe.ingredients">
-              {{ingredient.amount}} {{ingredient.units}} <a v-bind:href="ingredient.link">{{ingredient.name}}</a>
+              {{ingredient.amount}} {{ingredient.units}} <span v-if="ingredient.units.length > 0"> of </span>
+              <a v-if="ingredient.link.length > 0" v-bind:href="ingredient.link">{{ingredient.name}}</a><span v-else>{{ingredient.name}}</span>
             </li>
           </ul>
           <ol>

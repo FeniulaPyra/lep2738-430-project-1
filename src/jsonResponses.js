@@ -31,7 +31,7 @@ const recipes = {
       {
         name: 'Kraft mac and cheese bowl',
         amount: '1',
-        unit: '',
+        units: '',
         link: 'https://www.kraftmacandcheese.com/products/100166000003/microwavable',
       },
     ],
@@ -50,13 +50,13 @@ const recipes = {
       {
         name: "Campbell's Soup",
         amount: '1',
-        unit: 'can',
+        units: 'can',
         link: '',
       },
       {
         name: 'bowl',
         amount: '1',
-        unit: '',
+        units: '',
         link: '',
       },
     ],
@@ -72,13 +72,13 @@ const recipes = {
       {
         name: 'pasta',
         amount: '1',
-        unit: 'box',
+        units: 'box',
         link: '',
       },
       {
         name: 'sauce',
         amount: '1',
-        unit: 'jar',
+        units: 'jar',
         link: '',
       },
     ],
@@ -110,10 +110,12 @@ const recipes = {
   },
 };
 
+// formats the data and sends the response
 const respond = (request, response, method, statusCode, object) => {
   let acceptedTypes = request.headers.accept && request.headers.accept.split(',');
   acceptedTypes = acceptedTypes || [];
 
+  // default headers
   const headers = {
     'content-type': 'application/json',
     'access-control-allow-origin': '*',
@@ -181,6 +183,7 @@ const respond = (request, response, method, statusCode, object) => {
   response.end();
 };
 
+// various error messages.
 const missingParameters = {
   message: `Error: you are missing parameters. Recipes are required to have a name, at least 1 
             ingredient and at least 1 step`,
@@ -194,20 +197,24 @@ const invalidID = {
   message: 'A recipe with that name does not exist.',
   id: 'notFound',
 };
+const missingName = {
+  message: 'You are required to provide the unique name of a recipe to delete it.',
+  id: 'missingName'
+}
 const recipeAlreadyExists = {
-  message: `A recipe with that name already exists. If you are trying to update an existing recipe, 
-            use the edit button.`,
+  message: `A recipe with that name already exists. If you are trying to update an existing recipe, go to /admin and click the edit button under the recipe you want to edit.`,
   id: 'conflict',
 };
 const modifyEndpointMethodRestriction = {
-  message: 'This endpoint is for POST, PUT and DELETE methods only. For viewing api data, use /recipes',
+  message: 'This endpoint is for POST, PUT and DELETE methods only. For viewing api data, use /recipes or /ingredients',
   id: 'methodNotAllowed',
 };
 const dataEndpointMethodRestriction = {
-  message: 'This endpoint is for GET and HEAD methods only. For modifying api data, use /manage-recipes',
+  message: 'This endpoint is for GET and HEAD methods only. For modifying api data, use /modify-recipes',
   id: 'methodNotAllowed',
 };
 
+// gets recipes from the array of recipes.
 const getRecipes = (request, response, params, httpMethod) => {
   // for finding a recipe with this entire name
   let { name } = params;
@@ -252,15 +259,12 @@ const getRecipes = (request, response, params, httpMethod) => {
     results = results.slice(0, limit);
   }
 
-  // if there were no results respond saying so.
-  if (results.length < 1) {
-    return respond(request, response, httpMethod, 404, noRecipes);
-  }
-  // otherwise send back the recipes
+  // send back the recipes
 
   return respond(request, response, httpMethod, 200, results);
 };
 
+// adds a recipe or updates an existing recipe, depinding on the method
 const addRecipe = (request, response, params, method) => {
   const recipe = params;
 
@@ -291,9 +295,10 @@ const addRecipe = (request, response, params, method) => {
   return respond(request, response, method, responseCode, jsonResponse);
 };
 
+// removes a recipe
 const deleteRecipe = (request, response, params, method) => {
   if (!params.name || params.name < 1) {
-    return respond(request, response, method, 400, missingParameters);
+    return respond(request, response, method, 400, missingName);
   }
 
   const recipeName = params.name.toLowerCase();
@@ -307,11 +312,12 @@ const deleteRecipe = (request, response, params, method) => {
   const responseCode = 204;
   const jsonResponse = {
     message: 'Successfully deleted recipe.',
-    id: 'deleteSuccess',
+    id: 'deleteSuccess'
   };
   return respond(request, response, method, responseCode, jsonResponse);
 };
 
+// helper function that handles any method that involves changing the data on the server
 const handlePutAndPost = (request, response, method, funct) => {
   const body = [];
 
@@ -326,6 +332,7 @@ const handlePutAndPost = (request, response, method, funct) => {
   });
 };
 
+// handles any get requests for recipes
 const handleRecipes = (request, response, params, httpMethod) => {
   if (httpMethod === 'HEAD' || httpMethod === 'GET') {
     getRecipes(request, response, params, httpMethod);
@@ -334,20 +341,13 @@ const handleRecipes = (request, response, params, httpMethod) => {
   }
 };
 
-const manageRecipes = (request, response, params, httpMethod) => {
-  switch (httpMethod) {
-    case 'POST':
-      handlePutAndPost(request, response, httpMethod, addRecipe);
-      break;
-    case 'PUT':
-      handlePutAndPost(request, response, httpMethod, addRecipe);
-      break;
-    case 'DELETE':
-      handlePutAndPost(request, response, httpMethod, deleteRecipe);
-      break;
-    default:
-      respond(request, response, httpMethod, 405, modifyEndpointMethodRestriction);
-      break;
+const modifyRecipes = (request, response, params, httpMethod) => {
+  if (httpMethod === 'POST' || httpMethod === 'PUT') {
+    handlePutAndPost(request, response, httpMethod, addRecipe);
+  } else if (httpMethod === 'DELETE') {
+    handlePutAndPost(request, response, httpMethod, deleteRecipe);
+  } else {
+    respond(request, response, httpMethod, 405, modifyEndpointMethodRestriction);
   }
 };
 
@@ -370,6 +370,6 @@ const handleIngredients = (request, response, httpMethod) => {
 module.exports = {
   handleRecipes,
   handleIngredients,
-  manageRecipes,
+  modifyRecipes,
 
 };

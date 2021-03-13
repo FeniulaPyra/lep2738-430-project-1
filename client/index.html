@@ -20,7 +20,10 @@
        To browse recipes, go <a href="/browse">HERE</a></p>
 
       <h2>API Information</h2>
-      <p>The api endpoint is at <a href="/recipes">/recipes</a></p>
+      <p>The GET/HEAD endpoint of the api is at <a href="/recipes">/recipes</a></p>
+      <p>You can also find all ingredients used on the site here <a href="/ingredients">/ingredients</a></p>
+      <p>(this can be useful for searching for recipes sometimes)</p>
+      <p>The POST/PUT/DELETE api endpoint is at <a href="/modify-recipes">/modify-recipes</a></p>
       <h3> Parameters:</h3>
         <ul>
           <li>name - finds recipes with this exact entire phrase</li>
@@ -29,39 +32,16 @@
           <li>limit - limits the number of results sent back. The default is no limit.</li>
         </ul>
 
-        All of the parameters can be used at the same time, but I using the name parameter <br>
-        at the same time as the other parameters would be redundant, since at this time <br>
-        every recipe is required to have a unique name, so the name parameter will always come up<br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        with just one recipe.<br><br>
-        Using none of the parameters will send back every recipe. (for now)
+      All of the parameters can be used at the same time for searching, but using the name parameter <br>
+      at the same time as the other parameters would be redundant, since at this time <br>
+      every recipe is required to have a unique name, so the name parameter will always come up<br>
+      with just one recipe.<br><br>
+      Using none of the parameters will send back every recipe.
+
+      When sending a post request, you need a name, an array of ingredients, and an array of steps. Ingredients
+      must each have a name, an amount, and a unit. A link is technically required but you can leave it blank.
+      Steps require a text attribute which holds the text of the step. (This is to make it so vue can loop through
+      the steps array).
     </main>
   </body>
 </html>
