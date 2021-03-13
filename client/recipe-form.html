@@ -29,7 +29,7 @@
           ingredients: [{
               name: '',
               amount: '',
-              unit: '',
+              units: '',
               link: ''
             }],
           steps: [{"text" : ''}]
@@ -39,7 +39,7 @@
             this.ingredients.push({
               name: '',
               amount: '',
-              unit: '',
+              units: '',
               link: ''
               
             });
@@ -92,7 +92,7 @@
             <!--is text to allow for input of fractions (e.g. 1/2 cup flour is rarely written as .5 cup flour)-->
             <label for="amount">Amount: </label> <input type="text" v-model="ingredient.amount" size="4"> 
             <label for="units">Units: </label>
-            <select id="units" v-model="ingredient.unit">
+            <select id="units" v-model="ingredient.units">
               <option value=" "> </option>
 
               <option value="can">can</option>
